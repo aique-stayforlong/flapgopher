@@ -38,7 +38,7 @@ func newScene(r *sdl.Renderer) (*scene, error) {
 }
 
 func (s *scene) run(context context.Context, r *sdl.Renderer) error {
-	refresh := time.NewTicker(160 * time.Millisecond)
+	refresh := time.NewTicker(50 * time.Millisecond)
 	defer refresh.Stop()
 
 	end := time.NewTicker(5 * time.Second)
