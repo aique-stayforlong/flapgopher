@@ -4,7 +4,6 @@ import (
 	"os"
 	"fmt"
 	"time"
-	"context"
 	"github.com/veandco/go-sdl2/sdl"
 	ttf "github.com/veandco/go-sdl2/ttf"
 )
@@ -51,14 +50,15 @@ func run() error {
 
 	defer s.destroy()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	events := make(chan sdl.Event)
 
-	if err := s.run(ctx, r) ; err != nil {
-		return err
-	}
-	
-	return nil
+	go func() {
+		for {
+			events <- sdl.WaitEvent()
+		}
+	}()
+
+	return s.run(events, r)
 }
 
 func drawTitle(r *sdl.Renderer) error {
