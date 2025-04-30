@@ -8,12 +8,21 @@ import (
 
 type bird struct {
 	time int
+	dead bool
 	frames []*sdl.Texture
 
-	y, speed float64
+	x, y int32
+
+	width, height int32
+	
+	speed float64
 }
 
 const (
+	initialWidth = 50
+	initialHeight = 43
+	initialX = 10
+	initialY = 300
 	gravity = 0.75
 	jumpSpeed = 10
 )
@@ -32,24 +41,35 @@ func newBird(r *sdl.Renderer) (*bird, error) {
 		frames = append(frames, bird)
 	}
 
-	return &bird{ frames: frames, y: 300 }, nil
+	return &bird{
+		frames: frames,
+		x: initialX,
+		y: initialY,
+		width: initialWidth,
+		height: initialHeight,
+	}, nil
 }
 
-func (b *bird) paint(r *sdl.Renderer) error {
+func (b *bird) isDead() bool {
+	return b.dead
+}
+
+func (b *bird) update() {
 	b.time++
-	b.y -= b.speed
+	b.y -= int32(b.speed)
 	b.speed += gravity
 
 	if b.y < 0 {
-		b.speed = -b.speed
-		b.y = 0
+		b.dead = true
 	}
+}
 
-	rect := &sdl.Rect{ X: 10, Y: (600 - int32(b.y)) - 43/2, W: 50, H: 43 }
+func (b *bird) paint(r *sdl.Renderer) error {
+	rect := &sdl.Rect{ X: b.x, Y: 600 - b.y - b.height / 2, W: b.width, H: b.height }
 	frame := b.frames[b.time % len(b.frames)]
 
 	if err := r.Copy(frame, nil, rect) ; err != nil {
-		return fmt.Errorf("could not copy texture: %v", err)
+		return fmt.Errorf("could not copy bird texture: %v", err)
 	}
 
 	return nil
@@ -57,6 +77,12 @@ func (b *bird) paint(r *sdl.Renderer) error {
 
 func (b *bird) jump() {
 	b.speed = -jumpSpeed
+}
+
+func (b *bird) restart() {
+	b.dead = false
+	b.y = initialY
+	b.speed = 0
 }
 
 func (b *bird) destroy() {
