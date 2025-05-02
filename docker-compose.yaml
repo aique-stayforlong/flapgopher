@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    image: flapgopher-image
+    container_name: flapgopher-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XDG_RUNTIME_DIR=/tmp/.runtime
+    volumes:
+      - ./:/app
+    devices:
+      - /dev/snd:/dev/snd
+      

@@ -1,28 +1,30 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"log"
+	"os"
 	"time"
+
 	"github.com/veandco/go-sdl2/sdl"
 	ttf "github.com/veandco/go-sdl2/ttf"
 )
 
 func main() {
-	if err := run() ; err != nil {
+	if err := run(); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(2)
 	}
 }
 
 func run() error {
-	if err := sdl.Init(sdl.INIT_EVERYTHING) ; err != nil {
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		return fmt.Errorf("could not initialize SDL: %v", err)
 	}
 
 	defer sdl.Quit()
 
-	if err := ttf.Init() ; err != nil {
+	if err := ttf.Init(); err != nil {
 		return fmt.Errorf("could not initialize TTF: %v", err)
 	}
 
@@ -36,9 +38,11 @@ func run() error {
 
 	defer w.Destroy()
 
-	if err := drawTitle(r, "Flappy Gopher") ; err != nil {
+	if err := drawTitle(r, "Flappy Gopher"); err != nil {
 		return fmt.Errorf("could not draw title: %v", err)
 	}
+
+	log.Printf("Flappy Gopher is running")
 
 	time.Sleep(2 * time.Second)
 
@@ -72,7 +76,7 @@ func drawTitle(r *sdl.Renderer, text string) error {
 
 	defer f.Close()
 
-	color := sdl.Color{ R: 255, G: 100, B: 0, A: 255 }
+	color := sdl.Color{R: 255, G: 100, B: 0, A: 255}
 
 	s, err := f.RenderUTF8Solid(text, color)
 
@@ -90,7 +94,7 @@ func drawTitle(r *sdl.Renderer, text string) error {
 
 	defer t.Destroy()
 
-	if err := r.Copy(t, nil, nil) ; err != nil {
+	if err := r.Copy(t, nil, nil); err != nil {
 		return fmt.Errorf("could not copy texture: %v", err)
 	}
 
